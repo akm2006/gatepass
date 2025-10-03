@@ -9,11 +9,11 @@ export default function SignUpPage() {
             rootBox: "mx-auto",
             card: "shadow-lg",
           },
-        }}
+        } }
         routing="path"
         path="/sign-up"
         signInUrl="/sign-in"
-        afterSignUpUrl="/onboarding"
+        forceRedirectUrl="/onboarding"
       />
     </div>
   )
