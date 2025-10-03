@@ -1,33 +1,31 @@
-import { redirect } from "next/navigation"
-import { auth } from "@clerk/nextjs/server"
-import connectDB from "@/server/config/database"
-import User from "@/server/models/User"
+// app/dashboard/page.tsx
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
+import connectDB from "@/server/config/database";
+import User, { type IUser } from "@/server/models/User";
 
 export default async function DashboardPage() {
-  const { userId } = await auth()
-
+  const { userId } = await auth();
   if (!userId) {
-    redirect("/sign-in")
+    return redirect("/sign-in");
   }
 
-  await connectDB()
-  const user = await User.findOne({ clerkId: userId })
-
+  await connectDB();
+  const user = (await User.findOne({ clerkId: userId }).lean<IUser>()) as IUser | null;
   if (!user) {
-    redirect("/onboarding")
+    return redirect("/onboarding");
   }
 
-  // Redirect to role-specific dashboard
   switch (user.role) {
     case "student":
-      redirect("/student")
+      return redirect("/student");
     case "parent":
-      redirect("/parent")
+      return redirect("/parent");
     case "warden":
-      redirect("/warden")
+      return redirect("/warden");
     case "security":
-      redirect("/security")
+      return redirect("/security");
     default:
-      redirect("/onboarding")
+      return redirect("/onboarding");
   }
 }
